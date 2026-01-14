@@ -1,0 +1,19 @@
+module top;
+    bit clk = 0;
+    always #5 clk = ~clk;
+
+    counter_if intf(clk);
+
+    counter dut (
+        .clk   (clk),
+        .rst   (intf.rst),
+        .en    (intf.en),
+        .count (intf.count)
+    );
+
+    initial begin
+        uvm_config_db #(virtual counter_if)::set(null, "*", "vif", intf);
+        run_test("counter_test");
+    end
+       
+endmodule
