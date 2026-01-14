@@ -1,0 +1,25 @@
+class counter_driver extends uvm_driver #(counter_txn);
+    `uvm_component_utils(counter_driver)
+
+    virtual counter_if vif;
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
+        if (!uvm_config_db #(virtual counter_if)::get(this, "", "vif", vif))
+            `uvm_fatal("DRV", "Virtual interface not set")
+    endfunction
+
+    task run_phase(uvm_phase phase);
+        counter_txn tx;
+        forever begin
+            seq_item_port.get_next_item(tx);
+            vif.rst <= tx.rst;
+            vif.en  <= tx.en;
+            @(posedge vif.clk);
+            seq_item_port.item_done();
+        end
+    endtask
+endclass
