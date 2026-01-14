@@ -1,0 +1,24 @@
+class counter_monitor extends uvm_monitor;
+    `uvm_component_utils(counter_monitor)
+
+    virtual counter_if vif;
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
+        if (!uvm_config_db #(virtual counter_if)::get(this, "", "vif", vif))
+            `uvm_fatal("MON", "Virtual interface not set")
+    endfunction
+
+    task run_phase(uvm_phase phase);
+        forever begin
+            @(posedge vif.clk);
+            `uvm_info("MON",
+                $sformatf("rst=%0b en=%0b count=%0d",
+                vif.rst, vif.en, vif.count),
+                UVM_LOW)
+        end
+    endtask
+endclass
