@@ -1,0 +1,27 @@
+class counter_seq extends uvm_sequence #(counter_txn);
+    `uvm_object_utils(counter_seq)
+
+    function new(string name="counter_seq");
+        super.new(name);
+    endfunction
+
+    task body();
+        counter_txn tx;
+
+        // Reset
+        tx = counter_txn::type_id::create("tx");
+        tx.rst = 1;
+        tx.en  = 0;
+        start_item(tx);
+        finish_item(tx);
+
+        // Enable counting
+        repeat (10) begin
+            tx = counter_txn::type_id::create("tx");
+            tx.rst = 0;
+            tx.en  = 1;
+            start_item(tx);
+            finish_item(tx);
+        end
+    endtask
+endclass
