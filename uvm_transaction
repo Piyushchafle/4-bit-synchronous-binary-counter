@@ -1,0 +1,12 @@
+class counter_txn extends uvm_sequence_item;
+
+    rand bit rst;
+    rand bit en;
+
+    `uvm_object_utils(counter_txn)
+
+    function new(string name="counter_txn");
+        super.new(name);
+    endfunction
+
+endclass
