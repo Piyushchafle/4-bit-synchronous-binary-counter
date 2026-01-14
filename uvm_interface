@@ -1,0 +1,7 @@
+
+
+interface counter_if(input bit clk);
+    logic rst;
+    logic en;
+    logic [3:0] count;
+endinterface
