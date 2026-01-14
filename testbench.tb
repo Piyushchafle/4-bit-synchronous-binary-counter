@@ -1,0 +1,69 @@
+`timescale 1ns/1ps
+
+module tb_counter;
+
+    // DUT signals
+    reg clk;
+    reg rst;
+    reg en;
+    wire [3:0] count;
+
+    // Instantiate DUT
+    counter dut (
+        .clk(clk),
+        .rst(rst),
+        .en(en),
+        .count(count)
+    );
+
+    // Clock generation: 10ns period
+    initial clk = 0;
+    always #5 clk = ~clk;
+
+    // Test sequence
+    initial begin
+        // Initialize
+        rst = 1; en = 0;
+
+        // Apply reset
+        #15;
+        rst = 0;
+
+        // Enable counter
+        en = 1;
+
+        // Count 10 cycles
+        repeat (10) @(posedge clk);
+
+        // Disable counter
+        en = 0;
+
+        // Hold for 5 cycles
+        repeat (5) @(posedge clk);
+
+        // Assert reset again
+        rst = 1;
+        #10;
+        rst = 0;
+
+        // Enable again
+        en = 1;
+        repeat (5) @(posedge clk);
+
+        $finish;
+    end
+
+    // Optional: Display counter
+    initial begin
+        $display("Time\tclk\trst\ten\tcount");
+      $monitor("%0t\t%b\t%b\t%b\t%0d", $time, clk, rst,   en, count);
+    end
+
+  initial begin
+    $dumpfile("dump.vcd"); 
+    $dumpvars(0, tb_counter); 
+  
+end
+
+  
+endmodule
